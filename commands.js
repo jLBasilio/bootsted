@@ -59,8 +59,8 @@ const commands = {
     const indexS = params.indexOf('-s')
     let reply = null;
     if (indexS > 0 && params.length > indexS+1) {
-      reply = await message.reply(` said: ${params.slice(0, indexS).join(' ')}\t\t[ Disappears in ${params[indexS+1]}s ]`)
-      setTimeout(() => reply.delete(), params[indexS+1] * 1000);
+      reply = await message.reply(` said: ${params.slice(0, indexS).join(' ')}\t\t[ Disappears in ${params[indexS+1] <= 20 ? params[indexS+1] : '20' }s ]`)
+      setTimeout(() => reply.delete(), (params[indexS+1] <= 20 ? params[indexS+1] : 20) * 1000);
     } else {
       reply = await message.reply(` said: ${params.join(' ')}\t\t[ Disappears in 5s ]`)
       setTimeout(() => reply.delete(), 5000);
