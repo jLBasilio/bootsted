@@ -1,4 +1,5 @@
 import axios from 'axios';
+import helpCommands from './help';
 
 const error_command = (message) => message.channel.send('Incomplete command.');
 const commands = {
@@ -66,16 +67,44 @@ const commands = {
       setTimeout(() => reply.delete(), 5000);
     }
   },
+  'memst': (message) => {
+    const minutes = stamp => String((Date.now() - Date.parse(stamp.start)) / 60000).split('.')[0]
+    const type = {
+      0: 'playing',
+      1: 'streaming',
+      2: 'listening',
+      3: 'watching'
+    }
+    let toSend = `\n\n${message.channel.guild.name} Players:\n\n`
+    const { presences: [...presences], members: [...members] } = message.channel.guild;
+    const presentMems = members.filter(m => presences.some(p => p[0] === m[0]));
+    presentMems
+      .reduce((pms, pm) => {
+          const presence = presences.find(p => p[0] === pm[0])
+          const user = {};
+          user.username = pm[1].user.username
+          user.status = `${presence[1].clientStatus.web || 'offline'} (web), ${presence[1].clientStatus.desktop || 'offline'} (desktop), ${presence[1].clientStatus.mobile || 'offline'} (mobile)`
+          user.activity = presence[1].game
+            ? `Currently ${type[presence[1].game.type]}: ${presence[1].game.name}, ${presence[1].game.details} ${presence[1].game.timestamps && presence[1].game.timestamps.start
+              ? `for ${minutes(presence[1].game.timestamps)} minute(s)`
+              : null}`
+            : 'N/A'
+
+          return [...pms, user];
+        }, [])
+      .sort((a, b) => a.username - b.username)
+      .forEach(m => {
+        toSend += `\`User:\` ${m.username}\n`
+        toSend += `\`Status:\` ${m.status}\n`
+        toSend += `\`Activity:\` ${m.activity}\n`
+        toSend += '===\n'
+      });
+    message.channel.send(toSend)
+  },
   'help': (message) => {
-    message.channel.send(
-      'Made by @jeff_\
-      \n====\nCan only use the following commands using the prefix `!cb`:\n\
-      \t-`!cbgreet` - Emit hello to `@everyone`\n\
-      \t-`!cbleaguemh <LOL IGN>` - Display league match history\n\
-      \t-`!cbdelete` - Clear bot messages and associated commands \n\
-      \t-`!cbdisappear <MESSAGE> [-s <seconds>]` - Send a message and make it disappear specified by -s seconds. Otherwise 5. Limited to 20. \n\
-      \t-`!cbhelp` - Display help \n\n'
-    );
+    let toSend = 'Made by @jeff_\n===\n'
+    helpCommands.forEach(c => toSend += `\`${c.name}:\`  ${c.desc}\n`)
+    message.channel.send(toSend);
   }
 }
 
