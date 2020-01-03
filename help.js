@@ -20,6 +20,10 @@ const helpCommands = [
     desc: 'Check statuses of online server members'
   },
   {
+    name: '!cbmeme',
+    desc: 'Generate random meme from Reddit'
+  },
+  {
     name: '!cbhelp',
     desc: 'Display help'
   }

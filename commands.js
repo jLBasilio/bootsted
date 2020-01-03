@@ -102,6 +102,7 @@ const commands = {
       });
     message.channel.send(toSend)
   },
+  'meme': async (message) => message.channel.send((await axios.get(process.env.MEME_URL)).data.url),
   'help': (message) => {
     let toSend = 'Made by @jeff_\n===\n'
     helpCommands.forEach(c => toSend += `\`${c.name}:\`  ${c.desc}\n`)
