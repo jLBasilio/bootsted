@@ -85,11 +85,12 @@ const commands = {
           user.username = pm[1].user.username
           user.status = `${presence[1].clientStatus.web || 'offline'} (web), ${presence[1].clientStatus.desktop || 'offline'} (desktop), ${presence[1].clientStatus.mobile || 'offline'} (mobile)`
           user.activity = presence[1].game
-            ? `Currently ${type[presence[1].game.type]}: ${presence[1].game.name}, ${presence[1].game.details} ${presence[1].game.timestamps && presence[1].game.timestamps.start
-              ? `for ${minutes(presence[1].game.timestamps)} minute(s)`
-              : null}`
+            ? `Currently ${presence[1].game.type < 3
+              ? `${type[presence[1].game.type]}: ${presence[1].game.name}, ${presence[1].game.details} ${presence[1].game.timestamps && presence[1].game.timestamps.start
+                ? `for ${minutes(presence[1].game.timestamps)} minute(s)`
+                : ''}`
+              : 'playing'}`
             : 'N/A'
-
           return [...pms, user];
         }, [])
       .sort((a, b) => a.username - b.username)
