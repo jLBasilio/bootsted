@@ -1,5 +1,6 @@
 import axios from 'axios';
 import helpCommands from './help';
+import { clearEmj, setEmj } from '.';
 
 const error_command = (message) => message.channel.send('Incomplete command.');
 const commands = {
@@ -11,10 +12,8 @@ const commands = {
       error_command();
       return;
     }
-    const findChamp = (champs, id) => {        
-      for (const key in champs) {
-        if (id === parseInt(champs[key].key, 10)) return champs[key].name
-      }
+    const findChamp = (champs, id) => {
+      for (const key in champs) if (id === parseInt(champs[key].key, 10)) return champs[key].name
     }
     try {
       const user = params.join(' ');
@@ -69,7 +68,7 @@ const commands = {
   },
   'memst': (message) => {
     const minutes = stamp => String((Date.now() - Date.parse(stamp.start)) / 60000).split('.')[0]
-    const type = {
+    const actType = {
       0: 'playing',
       1: 'streaming',
       2: 'listening',
@@ -82,12 +81,14 @@ const commands = {
       .reduce((pms, pm) => {
           const presence = presences.find(p => p[0] === pm[0])
           const user = {};
+          const { game, clientStatus: { web, desktop, mobile } } = presence[1];
+
           user.username = pm[1].user.username
-          user.status = `${presence[1].clientStatus.web || 'offline'} (web), ${presence[1].clientStatus.desktop || 'offline'} (desktop), ${presence[1].clientStatus.mobile || 'offline'} (mobile)`
-          user.activity = presence[1].game
-            ? `Currently ${presence[1].game.type < 3
-              ? `${type[presence[1].game.type]}: ${presence[1].game.name}, ${presence[1].game.details} ${presence[1].game.timestamps && presence[1].game.timestamps.start
-                ? `for ${minutes(presence[1].game.timestamps)} minute(s)`
+          user.status = `${web || 'offline'} (web), ${desktop || 'offline'} (desktop), ${mobile || 'offline'} (mobile)`
+          user.activity = game
+            ? `Currently ${game.type < 3
+              ? `${actType[game.type]}: ${game.name},${game.details ? `${game.details} ` : ' ' } ${game.timestamps && game.timestamps.start
+                ? `for ${minutes(game.timestamps)} minute(s)`
                 : ''}`
               : 'playing'}`
             : 'N/A'
@@ -103,6 +104,11 @@ const commands = {
     message.channel.send(toSend)
   },
   'meme': async (message) => message.channel.send((await axios.get(process.env.MEME_URL)).data.url),
+  'react': (message, params) => {
+    if (!params.length) return;
+    setEmj(params)
+  },
+  'reactoff': () => clearEmj(),
   'help': (message) => {
     let toSend = 'Made by @jeff_\n===\n'
     helpCommands.forEach(c => toSend += `\`${c.name}:\`  ${c.desc}\n`)

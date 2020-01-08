@@ -26,6 +26,14 @@ const helpCommands = [
   {
     name: '!cbhelp',
     desc: 'Display help'
+  },
+  {
+    name: '!cbreact <EMOTES>',
+    desc: 'Spam reactions on each message'
+  },
+  {
+    name: '!cbreactoff',
+    desc: 'Turn off `!cbreact`'
   }
 ]
 
