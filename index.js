@@ -25,7 +25,7 @@ client.on('message', async message => {
       await commands[command](message, params);
     }
 
-    if (emjs.length) await Promise.all(emjs.map(async e => await message.react(e))); 
+    if (emjs.length) await Promise.all(emjs.map(async e => message.react(e))); 
   } catch (err) {
     throw new Error(err);
     console.log(err);
