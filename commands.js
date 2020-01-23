@@ -3,7 +3,7 @@ import helpCommands from './help';
 import { clearEmj, setEmj } from '.';
 
 const error_command = (message) => message.channel.send('Incomplete command.');
-const commands = {
+export const discord_commands = {
   'greet': (message) => {
     message.channel.send('@everyone Hello');
   },
@@ -114,6 +114,11 @@ const commands = {
     helpCommands.forEach(c => toSend += `\`${c.name}:\`  ${c.desc}\n`)
     message.channel.send(toSend);
   }
-}
+};
 
-export default commands;
+export const slack_commands = {
+  'meme': async (client, channel) => {
+    const { data: { url: meme } } = await axios.get(process.env.MEME_URL)
+    await client.chat.postMessage({ channel, text: meme })
+  }
+};

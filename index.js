@@ -3,7 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { WebClient } from '@slack/web-api';
 import Discord from 'discord.js';
-import commands from './commands';
+import * as commands from './commands';
 dotenv.config();
 
 const discordClient = new Discord.Client();
@@ -29,8 +29,8 @@ discordClient.on('message', async message => {
     const params = opts.slice(1);
 
     if (prefix === '!cb'
-      && commands.hasOwnProperty(command)) {
-      await commands[command](message, params);
+      && commands.discord_commands.hasOwnProperty(command)) {
+      await commands.discord_commands[command](message, params);
     }
 
     if (emjs.length) await Promise.all(emjs.map(async e => message.react(e))); 
@@ -40,9 +40,19 @@ discordClient.on('message', async message => {
   }
 });
 
-app.post('/slack/events', (req, res) => {
-  console.log(req.body)
-  res.send({ status: 200, challange: req.body.challenge })
+app.post('/slack/events', async (req, res) => {
+  const { event: { bot_id, text, channel, user } } = req.body;
+  if (!bot_id && text && text.startsWith('!qw')) {
+    const opts = text.split(' ');
+    const prefix = opts[0].substring(0, 3);
+    const command = opts[0].substring(3);
+
+    if (prefix === '!qw'
+      && commands.slack_commands.hasOwnProperty(command)) {
+      await commands.slack_commands[command](web, channel);
+    }
+  }
+  res.send({ status: 200, challenge: req.body.challenge })
 })
 
 app.get('/', (req, res) => {
