@@ -1,18 +1,26 @@
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
+import express from 'express';
+import bodyParser from 'body-parser';
+import { WebClient } from '@slack/web-api';
 import Discord from 'discord.js';
 import commands from './commands';
 dotenv.config();
 
-const client = new Discord.Client();
+const discordClient = new Discord.Client();
+const app = express();
+const web = new WebClient(process.env.SLACK_TOKEN);
 let emjs = [];
 
-client.once('ready', () => { 
-  console.log('Bot is ready')
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+discordClient.once('ready', () => { 
+  console.log('Discord bot ready')
 })
 
-client.login(process.env.TOKEN);
+discordClient.login(process.env.DISCORD_TOKEN);
 
-client.on('message', async message => {
+discordClient.on('message', async message => {
   if (message.author.username === process.env.BOT_NAME) return;
   try {
     const opts = message.content.split(' ');
@@ -30,6 +38,26 @@ client.on('message', async message => {
     throw new Error(err);
     console.log(err);
   }
+});
+
+app.post('/slack/events', (req, res) => {
+  console.log(req.body)
+  res.send({ status: 200, challange: req.body.challenge })
+})
+
+app.get('/', (req, res) => {
+  res.send({
+    message: 'hello',
+    status: '200'
+  })
+})
+
+app.set('port', process.env.PORT || 3001);
+app.listen(app.get('port'), () => {
+  console.log('Server is running on http://localhost:%d in %s node',
+    app.get("port"),
+    app.get("env")
+  );
 });
 
 export const clearEmj = () => emjs = [];

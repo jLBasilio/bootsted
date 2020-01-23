@@ -7,10 +7,14 @@
     "start": "nodemon -r esm index.js"
   },
   "dependencies": {
+    "@slack/events-api": "^2.3.1",
+    "@slack/web-api": "^5.7.0",
     "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
     "discord.js": "^11.5.1",
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
+    "express": "^4.17.1",
     "nodemon": "^2.0.2"
   },
   "engines": {
