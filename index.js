@@ -41,6 +41,7 @@ discordClient.on('message', async message => {
 });
 
 app.post('/slack/events', (req, res) => {
+  console.log(req.body)
   res.send({ status: 200, challange: req.body.challenge })
 })
 
