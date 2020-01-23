@@ -41,6 +41,11 @@ discordClient.on('message', async message => {
 });
 
 app.post('/slack/events', async (req, res) => {
+
+  if (req.body.challenge) {
+    res.send({ status: 200, challenge: req.body.challenge })
+  }
+
   const { event: { bot_id, text, channel, user } } = req.body;
   if (!bot_id && text && text.startsWith('!qw')) {
     const opts = text.split(' ');
@@ -52,7 +57,7 @@ app.post('/slack/events', async (req, res) => {
       await commands.slack_commands[command](web, channel);
     }
   }
-  res.send({ status: 200, challenge: req.body.challenge })
+  res.send({ status: 200, message: 'ok' })
 })
 
 app.get('/', (req, res) => {
