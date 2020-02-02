@@ -44,10 +44,11 @@ export const discord_commands = {
     message.channel.send('Deleting cancer_bot messages and commands...');
     let messages = [...(await message.channel.fetchMessages({ limit: 99 }))]
       .filter(m => m[1].channel.name === message.channel.name
-        && (m[1].author.username === process.env.BOT_NAME
+        && (m[1].author.username === process.env.DISCORD_BOT_NAME
           || m[1].content.startsWith('!cb')
         )
       );
+
     messages.forEach(m => m[1].delete())
   },
   'disappear': async (message, params) => {

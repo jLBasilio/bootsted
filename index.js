@@ -21,7 +21,7 @@ discordClient.once('ready', () => {
 discordClient.login(process.env.DISCORD_TOKEN);
 
 discordClient.on('message', async message => {
-  if (message.author.username === process.env.BOT_NAME) return;
+  if (message.author.username === process.env.DISCORD_BOT_NAME) return;
   try {
     const opts = message.content.split(' ');
     const prefix = opts[0].substring(0, 3);
