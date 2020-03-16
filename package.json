@@ -1,10 +1,11 @@
 {
   "name": "cancer_bot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/slack.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon -r esm index.js"
+    "start": "nodemon -r esm src/slack.js",
+    "discord": "nodemon -r esm src/discord.js"
   },
   "dependencies": {
     "@slack/events-api": "^2.3.1",

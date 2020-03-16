@@ -1,9 +1,9 @@
 import axios from 'axios';
-import helpCommands from './help';
-import { clearEmj, setEmj } from '.';
+import helpCommands from '../help';
+import { clearEmj, setEmj } from '../discord';
 
 const error_command = (message) => message.channel.send('Incomplete command.');
-export const discord_commands = {
+const discord_commands = {
   'greet': (message) => {
     message.channel.send('@everyone Hello');
   },
@@ -42,29 +42,39 @@ export const discord_commands = {
   },
   'delete': async (message) => {
     message.channel.send('Deleting cancer_bot messages and commands...');
-    let messages = [...(await message.channel.fetchMessages({ limit: 99 }))]
-      .filter(m => m[1].channel.name === message.channel.name
-        && (m[1].author.username === process.env.DISCORD_BOT_NAME
-          || m[1].content.startsWith('!cb')
-        )
-      );
+    try {
+      let messages = [...(await message.channel.fetchMessages({ limit: 99 }))]
+        .filter(m => m[1].channel.name === message.channel.name
+          && (m[1].author.username === process.env.DISCORD_BOT_NAME
+            || m[1].content.startsWith('!cb')
+          )
+        );
 
-    messages.forEach(m => m[1].delete())
+      messages.forEach(m => m[1].delete())
+    } catch (err) {
+      console.log(err)
+      throw new Error(err);
+    }
   },
   'disappear': async (message, params) => {
     if (!params.length) {
       error_command();
       return;
     }
-    await message.delete()
-    const indexS = params.indexOf('-s')
-    let reply = null;
-    if (indexS > 0 && params.length > indexS+1) {
-      reply = await message.reply(` said: ${params.slice(0, indexS).join(' ')}\t\t[ Disappears in ${params[indexS+1] <= 20 ? params[indexS+1] : '20' }s ]`)
-      setTimeout(() => reply.delete(), (params[indexS+1] <= 20 ? params[indexS+1] : 20) * 1000);
-    } else {
-      reply = await message.reply(` said: ${params.join(' ')}\t\t[ Disappears in 5s ]`)
-      setTimeout(() => reply.delete(), 5000);
+    try {
+      await message.delete()
+      const indexS = params.indexOf('-s')
+      let reply = null;
+      if (indexS > 0 && params.length > indexS+1) {
+        reply = await message.reply(` said: ${params.slice(0, indexS).join(' ')}\t\t[ Disappears in ${params[indexS+1] <= 20 ? params[indexS+1] : '20' }s ]`)
+        setTimeout(() => reply.delete(), (params[indexS+1] <= 20 ? params[indexS+1] : 20) * 1000);
+      } else {
+        reply = await message.reply(` said: ${params.join(' ')}\t\t[ Disappears in 5s ]`)
+        setTimeout(() => reply.delete(), 5000);
+      }
+    } catch (err) {
+      console.log(err)
+      throw new Error(err);
     }
   },
   'memst': (message) => {
@@ -105,8 +115,13 @@ export const discord_commands = {
     message.channel.send(toSend)
   },
   'meme': async (message) => {
-    const { data: { url } } = await axios.get(process.env.MEME);
-    message.channel.send(url);
+    try {
+      const { data: { url } } = await axios.get(process.env.MEME);
+      message.channel.send(url);
+    } catch (err) {
+      console.log(err)
+      throw new Error(err);
+    }
   },
   'react': (message, params) => {
     if (!params.length) return;
@@ -120,9 +135,4 @@ export const discord_commands = {
   }
 };
 
-export const slack_commands = {
-  'meme': async (client, channel) => {
-    const { data: { url: meme } } = await axios.get(process.env.MEME_URL)
-    await client.chat.postMessage({ channel, text: meme })
-  }
-};
+export default discord_commands;

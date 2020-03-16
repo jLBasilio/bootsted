@@ -1,1 +1,1 @@
-worker: nodemon -r esm index.js
+worker: nodemon -r esm src/discord.js
