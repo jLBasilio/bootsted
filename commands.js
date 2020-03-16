@@ -104,7 +104,10 @@ export const discord_commands = {
       });
     message.channel.send(toSend)
   },
-  'meme': async (message) => message.channel.send((await axios.get(process.env.MEME_URL)).data.url),
+  'meme': async (message) => {
+    const { data: { url } } = await axios.get(process.env.MEME);
+    message.channel.send(url);
+  },
   'react': (message, params) => {
     if (!params.length) return;
     setEmj(params)
