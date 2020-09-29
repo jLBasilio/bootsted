@@ -1,6 +1,15 @@
 import axios from 'axios';
 import helpCommands from '../help';
 import { clearEmj, setEmj } from '../discord';
+import {
+  DISCORD_BOT_NAME,
+  MEME,
+  LEAGUE_CHAMPS,
+  LEAGUE_PLAYER,
+  LEAGUE_HISTORY,
+  DISCORD_BOT_NAME,
+} from '../config';
+
 
 const error_command = (message) => message.channel.send('Incomplete command.');
 const discord_commands = {
@@ -21,10 +30,10 @@ const discord_commands = {
         { data: { data: champs } },
         { data: { accountId } }
       ] = await Promise.all([
-        axios.get(process.env.LEAGUE_CHAMPS),
-        axios.get(`${process.env.LEAGUE_PLAYER}?name=${encodeURI(user)}&region=PH`)
+        axios.get(LEAGUE_CHAMPS),
+        axios.get(`${LEAGUE_PLAYER}?name=${encodeURI(user)}&region=PH`)
       ]);
-      const { data: { games: { games } } } = await axios.get(`${process.env.LEAGUE_HISTORY}/${accountId}?beginIndex=0&endIndex=10`);
+      const { data: { games: { games } } } = await axios.get(`${LEAGUE_HISTORY}/${accountId}?beginIndex=0&endIndex=10`);
       message.channel.send(`${user}'s last 10 games`)
       let toSend = "";
       games.reverse().forEach(game => {
@@ -45,7 +54,7 @@ const discord_commands = {
     try {
       let messages = [...(await message.channel.fetchMessages({ limit: 99 }))]
         .filter(m => m[1].channel.name === message.channel.name
-          && (m[1].author.username === process.env.DISCORD_BOT_NAME
+          && (m[1].author.username === DISCORD_BOT_NAME
             || m[1].content.startsWith('!cb')
           )
         );
@@ -116,7 +125,7 @@ const discord_commands = {
   },
   'meme': async (message) => {
     try {
-      const { data: { url } } = await axios.get(process.env.MEME);
+      const { data: { url } } = await axios.get(MEME);
       message.channel.send(url);
     } catch (err) {
       console.log(err)
