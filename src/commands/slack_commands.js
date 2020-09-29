@@ -1,15 +1,31 @@
 import axios from 'axios';
+import { WebClient } from '@slack/web-api';
+import { SLACK_PREFIX, SLACK_TOKEN } from '../config';
 
-const slack_commands = {
-  'meme': async (client, channel) => {
-    try {
-      const { data: { url: meme } } = await axios.get(process.env.MEME)
-      await client.chat.postMessage({ channel, text: meme })
-    } catch (err) {
-      console.log(err)
-      throw new Error(err);
-    }
+const client = new WebClient(SLACK_TOKEN);
+
+const meme = async (channel) => {
+  try {
+    const { data: { url: text } } = await axios.get(process.env.MEME);
+    await client.chat.postMessage({ channel, text });
+  } catch (err) {
+    console.log(err);
   }
-};
+}
 
-export default slack_commands;
+const invalid = async (channel) => {
+  try {
+    await client.chat.postMessage({
+      channel,
+      text: `Invalid command, please use \`${SLACK_PREFIX}help\` for available commands.`
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+
+export default {
+  meme,
+  invalid
+};
