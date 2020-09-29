@@ -1,5 +1,5 @@
 {
-  "name": "cancer_bot",
+  "name": "bootsted",
   "version": "1.0.0",
   "main": "src/slack.js",
   "license": "MIT",
@@ -8,7 +8,6 @@
     "discord": "nodemon -r esm src/discord.js"
   },
   "dependencies": {
-    "@slack/events-api": "^2.3.1",
     "@slack/web-api": "^5.7.0",
     "axios": "^0.19.0",
     "body-parser": "^1.19.0",
