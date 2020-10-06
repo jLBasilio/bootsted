@@ -9,7 +9,7 @@ async function meme(channel, param) {
     const { valid, paramRes, result } = parseParam(param);
     if (valid) {
       const { data: { title, url: text } } = await axios.get(`${MEME}/${result}`);
-      await client.chat.postMessage({ channel, text: `_${title}_ \`${paramRes}\`\n${text}` });
+      await client.chat.postMessage({ channel, text: `_${title}_ | \`${paramRes}\`\n${text}` });
     } else await invalid(channel);
   } catch (err) {
     console.log(err);
